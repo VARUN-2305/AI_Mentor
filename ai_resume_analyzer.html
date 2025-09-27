@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume Analyzer - CareerLeap AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000;
+            color: #E0E0E0;
+        }
+        .aurora-text {
+            background: linear-gradient(90deg, #C77DFF 0%, #E040FB 50%, #651FFF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% 200%;
+            animation: aurora-flow 5s ease infinite;
+        }
+        @keyframes aurora-flow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .grid-background {
+            position: fixed; top: 0; left: 0; height: 100vh; width: 100vw;
+            background-image: linear-gradient(to right, #111 1px, transparent 1px), linear-gradient(to bottom, #111 1px, transparent 1px);
+            background-size: 2rem 2rem; z-index: -1; filter: blur(1px);
+        }
+        .cta-button {
+            background: linear-gradient(90deg, #8E2DE2, #008ae0);
+            transition: all 0.3s ease;
+        }
+        .cta-button:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0px 10px 30px rgba(142, 45, 226, 0.3);
+        }
+        textarea {
+             scrollbar-width: thin;
+            scrollbar-color: #4f46e5 #1f2937;
+        }
+
+        @property --p{
+          syntax: '<number>';
+          inherits: true;
+          initial-value: 0;
+        }
+        .score-circle {
+          --p: 0; /* progress percentage */
+          --b: 8px; /* Thinner border */
+          --w: 150px; /* width */
+          --c: #60a5fa; /* default color: blue-400 */
+          
+          width: var(--w);
+          aspect-ratio: 1;
+          position: relative;
+          display: inline-grid;
+          margin: 5px auto;
+          place-content: center;
+          font-size: 2.5em;
+          font-weight: 800;
+          color: #fff;
+          transition: --p 1.5s ease-in-out;
+        }
+        .score-circle:before {
+          content: "";
+          position: absolute;
+          border-radius: 50%;
+          inset: 0;
+          background: conic-gradient(var(--c) calc(var(--p) * 1%), #374151 0); /* Visible track color */
+          -webkit-mask: radial-gradient(farthest-side, #0000 calc(99% - var(--b)), #000 calc(100% - var(--b)));
+                  mask: radial-gradient(farthest-side, #0000 calc(99% - var(--b)), #000 calc(100% - var(--b)));
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="grid-background"></div>
+    <div class="container mx-auto p-6 max-w-7xl">
+        
+        <!-- Intake Section -->
+        <section id="intake-section" class="fade-in">
+            <div class="text-center">
+                <a href="index.html" class="text-3xl font-bold text-white">CareerLeap <span class="aurora-text">AI</span></a>
+                <h1 class="text-4xl font-extrabold text-white mt-4">AI Resume Analyzer</h1>
+                <p class="text-gray-400 mt-2">Get an instant, AI-powered analysis to beat the bots and impress recruiters.</p>
+            </div>
+            
+            <form id="intake-form" class="mt-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Job Description Panel -->
+                    <div class="bg-[#111827] border border-[#1f2937] rounded-xl p-6">
+                         <label for="jobDescription" class="flex items-center text-lg font-bold text-white mb-3">
+                            <i data-lucide="clipboard-list" class="w-6 h-6 mr-3 text-indigo-400"></i>
+                            Paste Job Description Here
+                        </label>
+                        <textarea id="jobDescription" rows="15" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g., Job details from LinkedIn or a company website..." required></textarea>
+                    </div>
+                    <!-- Resume Panel -->
+                    <div class="bg-[#111827] border border-[#1f2937] rounded-xl p-6">
+                        <label for="resumeText" class="flex items-center text-lg font-bold text-white mb-3">
+                            <i data-lucide="file-text" class="w-6 h-6 mr-3 text-indigo-400"></i>
+                            Paste Your Resume Text Here
+                        </label>
+                        <textarea id="resumeText" rows="15" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Copy and paste the full text from your resume document..." required></textarea>
+                    </div>
+                </div>
+                <div class="text-center mt-8">
+                    <button id="analyze-btn" type="submit" class="cta-button text-white font-bold py-3 px-10 rounded-full text-lg">
+                        Analyze My Resume
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Results Section -->
+        <section id="results-section" class="hidden fade-in">
+             <header class="text-center mb-10">
+                <div class="flex justify-center items-center gap-4">
+                     <a href="index.html" class="text-3xl font-bold text-white">CareerLeap <span class="aurora-text">AI</span></a>
+                     <button id="start-over-btn" class="bg-gray-800 text-white font-semibold py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors text-sm border border-gray-600">New Analysis</button>
+                </div>
+                <h1 class="text-4xl font-extrabold text-white mt-4">Your AI Resume Analysis</h1>
+            </header>
+
+            <div id="results-loading" class="text-center py-12">
+                <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-500 mx-auto"></div>
+                <p class="text-gray-400 mt-4">Our AI recruiter is performing over twenty checks on your resume...</p>
+            </div>
+
+            <div id="results-content" class="hidden">
+                 <div id="overall-score-section" class="mb-8 text-center">
+                    <!-- Overall Score will be injected here -->
+                 </div>
+                 <div id="score-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                     <!-- Score cards will be injected here -->
+                 </div>
+                 <div id="feedback-section" class="mt-8 bg-[#111827] border border-[#1f2937] rounded-xl p-6">
+                    <h2 class="text-2xl font-bold text-white mb-4">Actionable Feedback</h2>
+                     <div id="feedback-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Feedback cards will be injected here -->
+                     </div>
+                 </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        const intakeSection = document.getElementById('intake-section');
+        const resultsSection = document.getElementById('results-section');
+        const intakeForm = document.getElementById('intake-form');
+        const jobDescriptionEl = document.getElementById('jobDescription');
+        const resumeTextEl = document.getElementById('resumeText');
+        const loadingState = document.getElementById('results-loading');
+        const resultsContent = document.getElementById('results-content');
+        const startOverBtn = document.getElementById('start-over-btn');
+
+        const API_KEY = "AIzaSyCWoDkjLyQQ7A46JdIEPWhN0mUiDsSpLZQ";
+
+        intakeForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const jobDescription = jobDescriptionEl.value;
+            const resumeText = resumeTextEl.value;
+            if (!jobDescription || !resumeText) return;
+            
+            intakeSection.classList.add('hidden');
+            resultsSection.classList.remove('hidden');
+            analyzeResume(jobDescription, resumeText);
+        });
+        
+        startOverBtn.addEventListener('click', () => {
+            resultsSection.classList.add('hidden');
+            intakeSection.classList.remove('hidden');
+            resultsContent.classList.add('hidden');
+            document.getElementById('overall-score-section').innerHTML = '';
+            document.getElementById('score-grid').innerHTML = '';
+            document.getElementById('feedback-grid').innerHTML = '';
+            loadingState.classList.remove('hidden');
+            jobDescriptionEl.value = '';
+            resumeTextEl.value = '';
+        });
+        
+        async function callGeminiAPI(prompt) {
+            const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${API_KEY}`;
+            const payload = { 
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: { responseMimeType: "application/json" }
+            };
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) return { success: false, message: "API service is unavailable. Please try again later." };
+                const result = await response.json();
+                return { success: true, data: result.candidates?.[0]?.content?.parts?.[0]?.text };
+            } catch (error) { return { success: false, message: "A network error occurred." }; }
+        }
+
+        function parseJsonFromText(text) {
+            if (!text) return null;
+            const jsonStart = text.indexOf('{');
+            const jsonEnd = text.lastIndexOf('}');
+            if (jsonStart === -1 || jsonEnd === -1) return null;
+            try { return JSON.parse(text.substring(jsonStart, jsonEnd + 1)); }
+            catch (e) { return null; }
+        }
+
+        async function analyzeResume(jobDescription, resumeText) {
+            const prompt = `
+                Act as an expert technical recruiter. Analyze the provided resume against the given job description.
+                Your response must be a single, valid JSON object with the following keys:
+                - "overall_score": An integer from 0-100, representing the final, weighted average score for the resume.
+                - "overall_summary": A 1-2 sentence summary of the resume's performance.
+                - "analysis": {
+                    "impact_score": An integer score from 0-100 for how well the resume shows impact.
+                    "brevity_score": An integer score from 0-100 for resume conciseness.
+                    "style_score": An integer score from 0-100 for professional writing style.
+                    "ats_score": An integer score from 0-100 for keyword matching.
+                    "positives": An array of 3 specific, positive feedback points as strings.
+                    "negatives": An array of 3 specific, actionable improvement points as strings.
+                    "ats_feedback": An array of 3 specific suggestions to improve the ATS score, like missing keywords.
+                }
+                IMPORTANT: Provide only the raw JSON object as your response.
+            `;
+            const response = await callGeminiAPI(prompt);
+            if (!response.success) {
+                loadingState.innerHTML = `<p class="text-red-500 text-center font-semibold">${response.message}</p>`;
+                return;
+            }
+            const data = parseJsonFromText(response.data);
+            if (data && data.analysis && data.overall_score !== undefined) {
+                renderAnalysis(data);
+            } else {
+                loadingState.innerHTML = `<p class="text-red-500 text-center font-semibold">The AI returned an unexpected response. Please try again.</p>`;
+            }
+        }
+
+        function renderAnalysis(data) {
+            loadingState.classList.add('hidden');
+            resultsContent.classList.remove('hidden');
+            
+            const scoreGrid = document.getElementById('score-grid');
+            const feedbackGrid = document.getElementById('feedback-grid');
+            const overallScoreSection = document.getElementById('overall-score-section');
+            scoreGrid.innerHTML = '';
+            feedbackGrid.innerHTML = '';
+            overallScoreSection.innerHTML = '';
+
+            // Render Overall Score
+            const overallScore = data.overall_score;
+            let overallCircleColorVar;
+            if (overallScore >= 90) overallCircleColorVar = '#34d399';
+            else if (overallScore >= 70) overallCircleColorVar = '#60a5fa';
+            else if (overallScore >= 50) overallCircleColorVar = '#facc15';
+            else overallCircleColorVar = '#f87171';
+
+            const overallScoreCard = document.createElement('div');
+            overallScoreCard.innerHTML = `
+                <h2 class="text-2xl font-bold text-white mb-2">Overall Score</h2>
+                <div class="score-circle" style="--p:0; --c:'${overallCircleColorVar}'; --w: 200px; font-size: 3.5em;">
+                    <span class="score-text aurora-text">0</span>
+                </div>
+                <p class="text-gray-400 mt-2 max-w-xl mx-auto">${data.overall_summary}</p>
+            `;
+            overallScoreSection.appendChild(overallScoreCard);
+            animateScore(overallScoreCard.querySelector('.score-circle'), overallScoreCard.querySelector('.score-text'), overallScore);
+
+
+            const categories = [
+                { name: 'Impact', score: data.analysis.impact_score },
+                { name: 'Brevity', score: data.analysis.brevity_score },
+                { name: 'Style', score: data.analysis.style_score },
+                { name: 'Keyword Match', score: data.analysis.ats_score }
+            ];
+
+            categories.forEach(category => {
+                const card = document.createElement('div');
+                card.className = 'bg-[#111827] border border-[#1f2937] rounded-xl p-6 text-center';
+                
+                let circleColorVar;
+                if (category.score >= 90) circleColorVar = '#34d399';
+                else if (category.score >= 70) circleColorVar = '#60a5fa';
+                else if (category.score >= 50) circleColorVar = '#facc15';
+                else circleColorVar = '#f87171';
+                
+                card.innerHTML = `
+                    <h3 class="font-bold text-white tracking-widest uppercase">${category.name}</h3>
+                    <div class="my-4">
+                        <div class="score-circle" style="--p:0; --c:'${circleColorVar}';">
+                            <span class="score-text aurora-text">0</span>
+                        </div>
+                    </div>
+                `;
+                scoreGrid.appendChild(card);
+                animateScore(card.querySelector('.score-circle'), card.querySelector('.score-text'), category.score);
+            });
+            
+            // Render feedback
+            const feedbackData = [
+                { title: "Positives", icon: "thumbs-up", color: "text-green-400", points: data.analysis.positives },
+                { title: "Negatives", icon: "trending-down", color: "text-yellow-400", points: data.analysis.negatives },
+                { title: "ATS Score Boosters", icon: "key", color: "text-indigo-400", points: data.analysis.ats_feedback }
+            ];
+
+            feedbackData.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'bg-gray-900/50 border border-gray-700/50 rounded-xl p-6';
+                const pointsHtml = item.points.map(point => `<li class="flex items-start"><i data-lucide="check" class="w-4 h-4 mr-2 text-gray-500 mt-1 flex-shrink-0"></i><span>${point}</span></li>`).join('');
+                card.innerHTML = `
+                    <h3 class="flex items-center text-lg font-semibold ${item.color}"><i data-lucide="${item.icon}" class="w-5 h-5 mr-2"></i>${item.title}</h3>
+                    <ul class="text-gray-300 mt-4 space-y-2 text-sm">${pointsHtml}</ul>
+                `;
+                feedbackGrid.appendChild(card);
+            });
+            
+            lucide.createIcons();
+        }
+
+        function animateScore(circleEl, textEl, targetScore) {
+             setTimeout(() => {
+                circleEl.style.setProperty('--p', targetScore);
+                let currentScore = 0;
+                if(targetScore === 0) { textEl.innerText = 0; return; }
+                const incrementTime = 1500 / targetScore;
+                const interval = setInterval(() => {
+                    if (currentScore >= targetScore) {
+                        clearInterval(interval);
+                        textEl.innerText = targetScore;
+                    } else {
+                        currentScore++;
+                        textEl.innerText = currentScore;
+                    }
+                }, incrementTime);
+            }, 100);
+        }
+    </script>
+</body>
+</html>
+

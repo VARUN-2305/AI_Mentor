@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerLeap AI - Your Personalized AI Mentor & Placement Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000;
+            color: #E0E0E0;
+        }
+        .hero-gradient-text {
+            background: linear-gradient(90deg, #C77DFF 0%, #E040FB 50%, #651FFF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            display: block; /* Ensure the anchor tag behaves like a block */
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(199, 125, 255, 0.5);
+        }
+        .cta-button {
+            background: linear-gradient(90deg, #8E2DE2, #4A00E0);
+            transition: all 0.3s ease;
+            box-shadow: 0px 10px 30px rgba(142, 45, 226, 0.3);
+        }
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 15px 40px rgba(142, 45, 226, 0.5);
+        }
+        .faq-item {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header -->
+    <header class="fixed w-full top-0 z-50 bg-black/50 backdrop-blur-sm">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-white">CareerLeap <span class="hero-gradient-text">AI</span></a>
+            <nav class="hidden md:flex space-x-8 items-center">
+                <a href="#features" class="text-gray-300 hover:text-white transition">Features</a>
+                <a href="#testimonials" class="text-gray-300 hover:text-white transition">Testimonials</a>
+                <a href="#faq" class="text-gray-300 hover:text-white transition">FAQ</a>
+            </nav>
+            <a href="#features" class="cta-button text-white font-semibold py-2 px-6 rounded-full">Get Started Free</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="min-h-screen flex items-center justify-center text-center pt-24" style="background-image: radial-gradient(circle at center, rgba(74, 0, 224, 0.2) 0%, transparent 60%);">
+        <div class="container mx-auto px-6">
+            <h1 class="text-5xl md:text-7xl font-extrabold text-white leading-tight">
+                Stop Guessing. Start Achieving. <br> Your <span class="hero-gradient-text">AI Career Co-Pilot</span> Awaits.
+            </h1>
+            <p class="mt-6 text-lg md:text-xl text-gray-400 max-w-3xl mx-auto">
+                CareerLeap AI is your all-in-one placement readiness hub. We analyze your unique skills and ambitions to build a hyper-personalized roadmap, complete with a 24/7 AI mentor to guide you to your dream job.
+            </p>
+            <div class="mt-10">
+                <a href="#features" class="cta-button text-white font-bold py-4 px-10 rounded-full text-lg">
+                    Unlock Your Potential Now
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-4xl font-bold text-white">The Most Advanced Placement Hub Ever</h2>
+            <p class="text-gray-400 mt-4">Everything you need to go from learning to earning, all in one place.</p>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
+                <!-- Feature 1 -->
+                <a href="roadmap.html" class="feature-card rounded-2xl p-8">
+                    <i data-lucide="brain-circuit" class="w-12 h-12 hero-gradient-text mx-auto"></i>
+                    <h3 class="text-2xl font-bold mt-6 text-white">Hyper-Personalized Roadmap</h3>
+                    <p class="mt-2 text-gray-400">Receive a dynamic, step-by-step plan tailored to your target role and current skill level, powered by AI.</p>
+                </a>
+                <!-- Feature 2 -->
+                <a href="hyper_roadmap.html" class="feature-card rounded-2xl p-8">
+                    <i data-lucide="line-chart" class="w-12 h-12 hero-gradient-text mx-auto"></i>
+                    <h3 class="text-2xl font-bold mt-6 text-white">Live Job Market Pulse</h3>
+                    <p class="mt-2 text-gray-400">Get real-time insights on in-demand skills, salary benchmarks, and active job listings for your target role.</p>
+                </a>
+                <!-- Feature 3 -->
+                <a href="ai_mock.html" class="feature-card rounded-2xl p-8">
+                    <i data-lucide="bot" class="w-12 h-12 hero-gradient-text mx-auto"></i>
+                    <h3 class="text-2xl font-bold mt-6 text-white">AI Mock Interview Studio</h3>
+                    <p class="mt-2 text-gray-400">Practice for technical and behavioral interviews with an AI that gives you instant, actionable feedback.</p>
+                </a>
+                 <!-- Feature 4 -->
+                 <a href="ai_project.html" class="feature-card rounded-2xl p-8">
+                    <i data-lucide="lightbulb" class="w-12 h-12 hero-gradient-text mx-auto"></i>
+                    <h3 class="text-2xl font-bold mt-6 text-white">AI Project Generator</h3>
+                    <p class="mt-2 text-gray-400">Stuck on what to build? Get unique portfolio project ideas tailored to your skill gaps and career goals.</p>
+                </a>
+                <!-- Feature 5 -->
+                <a href="ai_resume_analyzer.html" class="feature-card rounded-2xl p-8">
+                    <i data-lucide="file-check-2" class="w-12 h-12 hero-gradient-text mx-auto"></i>
+                    <h3 class="text-2xl font-bold mt-6 text-white">Resume Analysis</h3>
+                    <p class="mt-2 text-gray-400">Our AI analyzes your resume against job descriptions, suggesting keywords and improvements to beat the bots.</p>
+                </a>
+                <!-- Feature 6 -->
+                <a href="AI_MENTOR.html" class="feature-card rounded-2xl p-8">
+                    <i data-lucide="message-square-quote" class="w-12 h-12 hero-gradient-text mx-auto"></i>
+                    <h3 class="text-2xl font-bold mt-6 text-white">24/7 AI Mentor Access</h3>
+                    <p class="mt-2 text-gray-400">Ask any career question, from technical doubts to salary negotiation, and get instant, intelligent answers.</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="py-20 bg-gray-900/50">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-4xl font-bold text-white">Trusted by Ambitious Achievers</h2>
+            <div class="grid md:grid-cols-2 gap-8 mt-12 max-w-4xl mx-auto">
+                <div class="feature-card rounded-2xl p-8 text-left">
+                    <p class="text-gray-300">"CareerLeap AI gave me the clarity I was missing. The live market data showed me exactly what skills to focus on, and the interview studio was a lifesaver. I landed a job at Google within 3 months!"</p>
+                    <div class="mt-6 flex items-center">
+                        <img src="https://placehold.co/48x48/E040FB/FFFFFF?text=SR" alt="User" class="rounded-full">
+                        <div class="ml-4">
+                            <p class="font-bold text-white">Sarah R.</p>
+                            <p class="text-sm text-gray-400">Software Engineer, Google</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="feature-card rounded-2xl p-8 text-left">
+                    <p class="text-gray-300">"As a recent graduate, I was completely lost. The AI project generator gave me incredible ideas for my portfolio, which made all the difference in my interviews. This platform is a game-changer!"</p>
+                    <div class="mt-6 flex items-center">
+                        <img src="https://placehold.co/48x48/651FFF/FFFFFF?text=MJ" alt="User" class="rounded-full">
+                        <div class="ml-4">
+                            <p class="font-bold text-white">Michael J.</p>
+                            <p class="text-sm text-gray-400">Data Analyst, Amazon</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="py-20">
+        <div class="container mx-auto px-6 max-w-3xl">
+            <h2 class="text-4xl font-bold text-white text-center">Frequently Asked Questions</h2>
+            <div class="mt-12 space-y-4">
+                <details class="faq-item pt-4">
+                    <summary class="flex justify-between items-center cursor-pointer text-xl font-semibold text-white pb-4">Is CareerLeap AI free? <i data-lucide="chevron-down" class="transition-transform"></i></summary>
+                    <p class="pt-2 pb-4 text-gray-400">Yes, you can get started for free! Our free plan includes an initial assessment and a personalized dashboard overview. Advanced features like the full Mock Interview Studio and unlimited AI Mentor access are available in our premium plans.</p>
+                </details>
+                <details class="faq-item pt-4">
+                    <summary class="flex justify-between items-center cursor-pointer text-xl font-semibold text-white pb-4">What kind of roles do you support? <i data-lucide="chevron-down" class="transition-transform"></i></summary>
+                    <p class="pt-2 pb-4 text-gray-400">We specialize in tech roles like Software Engineering, Data Science, Product Management, and Cybersecurity, but our AI is incredibly versatile and can generate a roadmap for virtually any career path you can imagine.</p>
+                </details>
+                 <details class="faq-item pt-4">
+                    <summary class="flex justify-between items-center cursor-pointer text-xl font-semibold text-white pb-4">How is this different from other career platforms? <i data-lucide="chevron-down" class="transition-transform"></i></summary>
+                    <p class="pt-2 pb-4 text-gray-400">While other platforms offer generic advice, CareerLeap AI provides a deeply personalized and integrated experience. Our platform doesn't just give you a plan; it gives you real-time market data, tailored project ideas, and an AI-powered interview practice studio to ensure you're not just ready, but ahead of the competition.</p>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 border-t border-gray-800">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-gray-400">&copy; 2025 CareerLeap AI. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+        document.querySelectorAll('details').forEach((el) => {
+            el.addEventListener('toggle', () => {
+                const icon = el.querySelector('summary svg');
+                if (icon) {
+                    if (el.open) {
+                        icon.style.transform = 'rotate(180deg)';
+                    } else {
+                        icon.style.transform = 'rotate(0deg)';
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

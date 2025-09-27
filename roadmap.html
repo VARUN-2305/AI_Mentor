@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hyper-Personalized Roadmap Generator - CareerLeap AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000;
+            color: #E0E0E0;
+        }
+        .aurora-text {
+            background: linear-gradient(90deg, #C77DFF 0%, #E040FB 50%, #651FFF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% 200%;
+            animation: aurora-flow 5s ease infinite;
+        }
+        @keyframes aurora-flow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .grid-background {
+            position: fixed; top: 0; left: 0; height: 100vh; width: 100vw;
+            background-image: linear-gradient(to right, #111 1px, transparent 1px), linear-gradient(to bottom, #111 1px, transparent 1px);
+            background-size: 2rem 2rem; z-index: -1; filter: blur(1px);
+        }
+        .task-checkbox:checked + .task-label { text-decoration: line-through; color: #6b7280; }
+        .horizontal-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: #4f46e5 #1f2937;
+        }
+        .horizontal-scrollbar::-webkit-scrollbar { height: 8px; }
+        .horizontal-scrollbar::-webkit-scrollbar-track { background: #1f2937; border-radius: 10px; }
+        .horizontal-scrollbar::-webkit-scrollbar-thumb { background-color: #4f46e5; border-radius: 10px; border: 2px solid #1f2937; }
+        .phase-card::after {
+            content: ''; position: absolute; top: 3.5rem; right: -2.5rem;
+            width: 2.5rem; height: 2px; background-color: #374151;
+        }
+        .phase-card:last-child::after { display: none; }
+        .cta-button {
+            background: linear-gradient(90deg, #8E2DE2, #4A00E0);
+            transition: all 0.3s ease;
+        }
+        .cta-button:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0px 10px 30px rgba(142, 45, 226, 0.3);
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="grid-background"></div>
+    <div class="container mx-auto p-6 max-w-7xl">
+        
+        <!-- Intake Section -->
+        <section id="intake-section" class="fade-in">
+            <div class="w-full max-w-lg mx-auto">
+                <div class="bg-[#111827] border border-[#1f2937] rounded-2xl p-8 shadow-2xl text-center">
+                    <a href="index.html" class="text-3xl font-bold text-white">CareerLeap <span class="aurora-text">AI</span></a>
+                    <h1 class="text-4xl font-extrabold text-white mt-6">Hyper-Personalized Roadmap</h1>
+                    <p class="text-gray-400 mt-2">Provide your details and let our AI build a strategic plan, just for you.</p>
+                    
+                    <form id="intake-form" class="text-left mt-8 space-y-6">
+                        <div>
+                            <label for="targetRole" class="block text-sm font-bold text-gray-300 mb-2">My Target Role is...</label>
+                            <select id="targetRole" class="w-full bg-gray-800 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                                <option value="Software Engineer">Software Engineer</option>
+                                <option value="Data Analyst">Data Analyst</option>
+                                <option value="Data Scientist">Data Scientist</option>
+                                <option value="Product Manager">Product Manager</option>
+                                <option value="UX/UI Designer">UX/UI Designer</option>
+                            </select>
+                        </div>
+                         <div>
+                            <label for="education" class="block text-sm font-bold text-gray-300 mb-2">My Highest Education is...</label>
+                            <select id="education" class="w-full bg-gray-800 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                                <option value="High School Diploma">High School Diploma</option>
+                                <option value="College Student">College Student</option>
+                                <option value="Bachelor's Degree" selected>Bachelor's Degree</option>
+                                <option value="Master's Degree">Master's Degree</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="strengths" class="block text-sm font-bold text-gray-300 mb-2">My Strengths are... (Optional)</label>
+                             <input type="text" id="strengths" class="w-full bg-gray-800 border border-gray-700 rounded-lg py-3 px-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g., Problem-solving, Teamwork">
+                        </div>
+                        <div>
+                            <label for="weaknesses" class="block text-sm font-bold text-gray-300 mb-2">I want to improve on... (Optional)</label>
+                             <input type="text" id="weaknesses" class="w-full bg-gray-800 border border-gray-700 rounded-lg py-3 px-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g., Public speaking, Advanced algorithms">
+                        </div>
+                        <button id="generate-btn" type="submit" class="w-full mt-6 cta-button text-white font-bold py-3 px-6 rounded-full text-lg">
+                            Generate Hyper-Personalized Roadmap
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section id="results-section" class="hidden fade-in">
+            <header class="text-center mb-10">
+                <div class="flex justify-center items-center gap-4">
+                     <a href="index.html" class="text-3xl font-bold text-white">CareerLeap <span class="aurora-text">AI</span></a>
+                     <button id="start-over-btn" class="bg-gray-800 text-white font-semibold py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors text-sm border border-gray-600">Start Over</button>
+                </div>
+                <h1 class="text-4xl font-extrabold text-white mt-4">Your Hyper-Personalized Roadmap</h1>
+                <p class="text-gray-400 mt-2">A unique strategic plan for a future <strong id="display-role" class="text-white"></strong></p>
+            </header>
+            
+            <div id="progress-container" class="bg-[#111827] border border-[#1f2937] rounded-xl p-4 mb-8 max-w-lg mx-auto hidden">
+                 <div class="flex justify-between items-center">
+                    <p class="font-semibold text-white">Overall Progress</p>
+                    <p id="progress-text" class="font-bold text-lg aurora-text">0%</p>
+                </div>
+                <div class="w-full bg-gray-700 rounded-full h-2.5 mt-2">
+                    <div id="progress-bar" class="bg-gradient-to-r from-purple-500 to-indigo-500 h-2.5 rounded-full" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div id="results-loading" class="text-center py-12">
+                <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-500 mx-auto"></div>
+                <p class="text-gray-400 mt-4">Synthesizing your personal profile with market data...</p>
+                 <p class="text-lg font-semibold text-white">Crafting your unique career strategy.</p>
+            </div>
+
+            <div id="results-content" class="hidden horizontal-scrollbar flex overflow-x-auto py-4 space-x-10 pl-4 pr-10">
+                <!-- Roadmap phases will be injected here -->
+            </div>
+        </section>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        const intakeSection = document.getElementById('intake-section');
+        const resultsSection = document.getElementById('results-section');
+        const intakeForm = document.getElementById('intake-form');
+        const targetRoleSelect = document.getElementById('targetRole');
+        const educationSelect = document.getElementById('education');
+        const strengthsInput = document.getElementById('strengths');
+        const weaknessesInput = document.getElementById('weaknesses');
+        const displayRoleEl = document.getElementById('display-role');
+        const loadingState = document.getElementById('results-loading');
+        const resultsContent = document.getElementById('results-content');
+        const startOverBtn = document.getElementById('start-over-btn');
+        const progressContainer = document.getElementById('progress-container');
+
+        const API_KEY = "AIzaSyCWoDkjLyQQ7A46JdIEPWhN0mUiDsSpLZQ";
+
+        intakeForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const userProfile = {
+                role: targetRoleSelect.value,
+                education: educationSelect.value,
+                strengths: strengthsInput.value,
+                weaknesses: weaknessesInput.value
+            };
+            intakeSection.classList.add('hidden');
+            resultsSection.classList.remove('hidden');
+            displayRoleEl.innerText = userProfile.role;
+            generateRoadmap(userProfile);
+        });
+        
+        startOverBtn.addEventListener('click', () => {
+            resultsSection.classList.add('hidden');
+            intakeSection.classList.remove('hidden');
+            resultsContent.classList.add('hidden').innerHTML = '';
+            loadingState.classList.remove('hidden');
+            progressContainer.classList.add('hidden');
+        });
+        
+        async function callGeminiAPI(prompt) {
+            const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${API_KEY}`;
+            const payload = { 
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: { responseMimeType: "application/json" }
+            };
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) return { success: false, message: "The API Key may be invalid or the service is temporarily unavailable." };
+                const result = await response.json();
+                return { success: true, data: result.candidates?.[0]?.content?.parts?.[0]?.text };
+            } catch (error) {
+                return { success: false, message: "A network error occurred." };
+            }
+        }
+
+        function parseJsonFromText(text) {
+            if (!text) return null;
+            const jsonStart = text.indexOf('{');
+            const jsonEnd = text.lastIndexOf('}');
+            if (jsonStart === -1 || jsonEnd === -1) return null;
+            try { return JSON.parse(text.substring(jsonStart, jsonEnd + 1)); }
+            catch (e) { return null; }
+        }
+
+        async function generateRoadmap(profile) {
+            const strengthsPrompt = profile.strengths ? `The user's self-identified strengths are: ${profile.strengths}. The roadmap should leverage these.` : '';
+            const weaknessesPrompt = profile.weaknesses ? `The user wants to improve in these areas: ${profile.weaknesses}. The roadmap should include tasks to address these.` : '';
+
+            const prompt = `
+                Act as an elite career strategist and AI mentor. Create a hyper-personalized, industry-standard roadmap for a user with this profile:
+                - Target Role: "${profile.role}"
+                - Education: "${profile.education}"
+                ${strengthsPrompt}
+                ${weaknessesPrompt}
+
+                Generate a multi-phase roadmap (3-4 phases). For EACH PHASE, provide: "phase_title", "phase_icon" (a valid lucide-icons.com name), "phase_goal", and an array of 3-5 "tasks".
+                For EACH TASK, provide: "task_name", "task_description" (explain how it relates to their goals/strengths/weaknesses), and an array of exactly 2 "resources".
+                For EACH RESOURCE, provide: "name", "type" (e.g., "Course", "Book", "Tool"), and a real "url".
+                
+                IMPORTANT: Provide only the raw JSON object as your response.
+            `;
+            const response = await callGeminiAPI(prompt);
+            if (!response.success) {
+                loadingState.innerHTML = `<p class="text-red-500 text-center font-semibold">${response.message}</p>`;
+                return;
+            }
+            const data = parseJsonFromText(response.data);
+            if (data && data.roadmap) {
+                renderRoadmap(data.roadmap);
+            } else {
+                loadingState.innerHTML = `<p class="text-red-500 text-center font-semibold">The AI returned an unexpected response. Please try again.</p>`;
+            }
+        }
+
+        function renderRoadmap(roadmapData) {
+            loadingState.classList.add('hidden');
+            resultsContent.classList.remove('hidden');
+            progressContainer.classList.remove('hidden');
+
+            let totalTasks = 0;
+            const roadmapHtml = roadmapData.map(phase => {
+                const tasksHtml = phase.tasks.map(task => {
+                    totalTasks++;
+                    const resourcesHtml = task.resources.map(res => `
+                        <a href="${res.url}" target="_blank" class="text-sm text-indigo-400 hover:text-indigo-300 bg-indigo-900/50 px-2 py-1 rounded-md transition-colors flex items-center gap-1.5">
+                            <i data-lucide="link-2" class="w-4 h-4"></i>
+                            <span>${res.name} <span class="text-gray-400 text-xs">(${res.type})</span></span>
+                        </a>`).join('');
+                    
+                    return `
+                        <div class="bg-gray-800/50 p-4 rounded-lg">
+                            <div class="flex items-start">
+                                <input type="checkbox" id="task-${totalTasks}" class="task-checkbox mt-1 h-5 w-5 rounded-md border-gray-600 bg-gray-900 text-indigo-600 focus:ring-indigo-500">
+                                <label for="task-${totalTasks}" class="task-label ml-3 flex-1">
+                                    <span class="font-semibold text-white block">${task.task_name}</span>
+                                    <p class="text-gray-400 text-sm mt-1">${task.task_description}</p>
+                                    <div class="mt-3 flex flex-wrap gap-2">${resourcesHtml}</div>
+                                </label>
+                            </div>
+                        </div>`;
+                }).join('');
+
+                return `
+                    <div class="phase-card relative flex-shrink-0 w-96 bg-[#111827] border border-[#1f2937] rounded-xl p-6">
+                        <div class="flex items-center space-x-4 mb-4">
+                             <div class="bg-indigo-600 text-white w-14 h-14 rounded-full flex items-center justify-center border-4 border-black">
+                                <i data-lucide="${phase.phase_icon || 'flag'}" class="w-7 h-7"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-xl font-bold aurora-text">${phase.phase_title}</h2>
+                                <p class="text-gray-400 text-sm">${phase.phase_goal}</p>
+                            </div>
+                        </div>
+                        <div class="space-y-4 h-80 overflow-y-auto pr-2 horizontal-scrollbar">${tasksHtml}</div>
+                    </div>`;
+            }).join('');
+
+            resultsContent.innerHTML = roadmapHtml;
+            lucide.createIcons();
+            
+            const checkboxes = document.querySelectorAll('.task-checkbox');
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    const completedTasks = document.querySelectorAll('.task-checkbox:checked').length;
+                    const percentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+                    progressBar.style.width = `${percentage}%`;
+                    progressText.innerText = `${percentage}%`;
+                });
+            });
+        }
+    </script>
+</body>
+</html>

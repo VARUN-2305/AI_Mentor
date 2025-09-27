@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Job Market Dashboard - CareerLeap AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000;
+            color: #E0E0E0;
+        }
+        .aurora-text {
+            background: linear-gradient(90deg, #C77DFF 0%, #E040FB 50%, #651FFF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% 200%;
+            animation: aurora-flow 5s ease infinite;
+        }
+        @keyframes aurora-flow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .grid-background {
+            position: fixed; top: 0; left: 0; height: 100vh; width: 100vw;
+            background-image: linear-gradient(to right, #111 1px, transparent 1px), linear-gradient(to bottom, #111 1px, transparent 1px);
+            background-size: 2rem 2rem; z-index: -1; filter: blur(1px);
+        }
+        .cta-button {
+            background: linear-gradient(90deg, #8E2DE2, #4A00E0);
+            transition: all 0.3s ease;
+        }
+        .cta-button:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0px 10px 30px rgba(142, 45, 226, 0.3);
+        }
+        .tab-button {
+            transition: all 0.2s ease-in-out;
+        }
+        .tab-button.active {
+            background-color: #8B5CF6;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="grid-background"></div>
+    <div class="container mx-auto p-6 max-w-7xl">
+        
+        <!-- Intake Section -->
+        <section id="intake-section" class="fade-in">
+            <div class="w-full max-w-lg mx-auto">
+                <div class="bg-[#111827] border border-[#1f2937] rounded-2xl p-8 shadow-2xl text-center">
+                    <a href="index.html" class="text-3xl font-bold text-white">CareerLeap <span class="aurora-text">AI</span></a>
+                    <h1 class="text-4xl font-extrabold text-white mt-6">Live Job Market Dashboard</h1>
+                    <p class="text-gray-400 mt-2">Get a deep, multi-faceted analysis of your target career powered by real-time data.</p>
+                    
+                    <form id="intake-form" class="text-left mt-8 space-y-6">
+                        <div>
+                            <label for="targetRole" class="block text-sm font-bold text-gray-300 mb-2">Select Target Role to Analyze</label>
+                            <select id="targetRole" class="w-full bg-gray-800 border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                                <option value="Software Engineer">Software Engineer</option>
+                                <option value="Data Analyst">Data Analyst</option>
+                                <option value="Data Scientist">Data Scientist</option>
+                                <option value="Product Manager">Product Manager</option>
+                                <option value="UX/UI Designer">UX/UI Designer</option>
+                            </select>
+                        </div>
+                        <button id="analyze-btn" type="submit" class="w-full mt-6 cta-button text-white font-bold py-3 px-6 rounded-full text-lg">
+                            Generate Dashboard
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard-section" class="hidden fade-in">
+            <header class="text-center mb-10">
+                <div class="flex justify-center items-center gap-4">
+                     <a href="index.html" class="text-3xl font-bold text-white">CareerLeap <span class="aurora-text">AI</span></a>
+                     <button id="start-over-btn" class="bg-gray-800 text-white font-semibold py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors text-sm border border-gray-600">New Analysis</button>
+                </div>
+                <h1 class="text-4xl font-extrabold text-white mt-4">Live Market Dashboard</h1>
+                <p class="text-gray-400 mt-2">Real-time intelligence for: <strong id="display-role" class="text-white"></strong></p>
+            </header>
+            
+            <div id="dashboard-loading" class="text-center py-12">
+                <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-500 mx-auto"></div>
+                <p class="text-gray-400 mt-4">Aggregating real-time market data and consulting our AI data analyst...</p>
+            </div>
+
+            <div id="dashboard-content" class="hidden">
+                <!-- Tab Navigation -->
+                <div class="mb-8 flex justify-center bg-[#111827] border border-[#1f2937] rounded-full p-1 max-w-md mx-auto">
+                    <button class="tab-button active flex-1 text-center font-semibold text-gray-300 py-2 px-4 rounded-full" data-tab="overview">Overview</button>
+                    <button class="tab-button flex-1 text-center font-semibold text-gray-300 py-2 px-4 rounded-full" data-tab="skills">Skill Trends</button>
+                    <button class="tab-button flex-1 text-center font-semibold text-gray-300 py-2 px-4 rounded-full" data-tab="salary">Salary Insights</button>
+                </div>
+
+                <!-- Tab Content -->
+                <div id="overview" class="tab-content active">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <div class="lg:col-span-3 bg-[#111827] border border-[#1f2937] rounded-xl p-6">
+                            <h2 class="text-2xl font-bold text-white flex items-center"><i data-lucide="info" class="w-6 h-6 mr-3 text-indigo-400"></i>AI Market Summary</h2>
+                            <p id="market-summary" class="text-gray-400 mt-4"></p>
+                        </div>
+                        <div class="lg:col-span-2 bg-[#111827] border border-[#1f2937] rounded-xl p-6">
+                            <h2 class="text-2xl font-bold text-white">Top In-Demand Skills</h2>
+                             <div class="h-96 mt-4"><canvas id="topSkillsChart"></canvas></div>
+                        </div>
+                        <div class="bg-[#111827] border border-[#1f2937] rounded-xl p-6">
+                             <h2 class="text-2xl font-bold text-white">Role Specializations</h2>
+                             <div class="h-96 mt-4"><canvas id="rolePieChart"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="skills" class="tab-content">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div class="bg-[#111827] border border-[#1f2937] rounded-xl p-6">
+                            <h2 class="text-2xl font-bold text-white">Skill Demand Over Time</h2>
+                             <div class="h-96 mt-4"><canvas id="skillTrendChart"></canvas></div>
+                        </div>
+                        <div class="bg-[#111827] border border-[#1f2937] rounded-xl p-6">
+                             <h2 class="text-2xl font-bold text-white">Skill Category Breakdown</h2>
+                             <div class="h-96 mt-4"><canvas id="skillRadarChart"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+                 <div id="salary" class="tab-content">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div class="bg-[#111827] border border-[#1f2937] rounded-xl p-6">
+                            <h2 class="text-2xl font-bold text-white">Salary Distribution</h2>
+                             <div class="h-96 mt-4"><canvas id="salaryHistogram"></canvas></div>
+                        </div>
+                        <div class="bg-[#111827] border border-[#1f2937] rounded-xl p-6">
+                             <h2 class="text-2xl font-bold text-white">Experience vs. Salary</h2>
+                             <div class="h-96 mt-4"><canvas id="experienceScatterPlot"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        const intakeSection = document.getElementById('intake-section');
+        const dashboardSection = document.getElementById('dashboard-section');
+        const intakeForm = document.getElementById('intake-form');
+        const targetRoleSelect = document.getElementById('targetRole');
+        const displayRoleEl = document.getElementById('display-role');
+        const loadingState = document.getElementById('dashboard-loading');
+        const dashboardContent = document.getElementById('dashboard-content');
+        const startOverBtn = document.getElementById('start-over-btn');
+        
+        const API_KEY = "AIzaSyCWoDkjLyQQ7A46JdIEPWhN0mUiDsSpLZQ";
+        let chartInstances = {};
+
+        intakeForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const role = targetRoleSelect.value;
+            intakeSection.classList.add('hidden');
+            dashboardSection.classList.remove('hidden');
+            displayRoleEl.innerText = role;
+            analyzeMarket(role);
+        });
+        
+        startOverBtn.addEventListener('click', () => {
+            dashboardSection.classList.add('hidden');
+            intakeSection.classList.remove('hidden');
+            dashboardContent.classList.add('hidden');
+            loadingState.classList.remove('hidden');
+            Object.values(chartInstances).forEach(chart => chart.destroy());
+            chartInstances = {};
+        });
+
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                button.classList.add('active');
+                document.getElementById(button.dataset.tab).classList.add('active');
+            });
+        });
+
+        async function callGeminiAPI(prompt) {
+            const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${API_KEY}`;
+            const payload = { 
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: { responseMimeType: "application/json" }
+            };
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) return { success: false, message: "API service is unavailable." };
+                const result = await response.json();
+                return { success: true, data: result.candidates?.[0]?.content?.parts?.[0]?.text };
+            } catch (error) { return { success: false, message: "A network error occurred." }; }
+        }
+
+        function parseJsonFromText(text) {
+            if (!text) return null;
+            const jsonStart = text.indexOf('{');
+            const jsonEnd = text.lastIndexOf('}');
+            if (jsonStart === -1 || jsonEnd === -1) return null;
+            try { return JSON.parse(text.substring(jsonStart, jsonEnd + 1)); }
+            catch (e) { return null; }
+        }
+
+        async function analyzeMarket(role) {
+            const prompt = `
+                Act as a senior data analyst. Provide a detailed, multi-faceted job market analysis for the role of "${role}".
+                Based on current (as of September 2025) job market data, generate a comprehensive analysis.
+                Your response must be a single, valid JSON object with the following keys:
+                - "summary": A 2-3 sentence paragraph summarizing the current hiring trend.
+                - "top_skills": An array of 10 objects, each with "skill" (string) and "demand_score" (integer 40-100).
+                - "role_specializations": An array of 3-5 objects, each with "specialization" (string) and "percentage" (integer, summing to 100).
+                - "skill_trend_data": An object with keys representing 3 top skills. Each key's value is an array of 12 objects, representing the last 12 months, with "month" (e.g., "2024-10-01") and "demand" (integer 0-100).
+                - "skill_categories": An object with 5-6 keys (e.g., "Languages", "Frameworks", "Cloud", "Soft Skills") and an integer value (0-100) for each.
+                - "salary_distribution": An array of 50 integers representing individual salaries for this role, creating a realistic distribution.
+                - "experience_salary": An array of 30 objects, each with "years_experience" (float 0-15) and "salary" (integer).
+                IMPORTANT: Provide only the raw JSON object as your response.
+            `;
+            const response = await callGeminiAPI(prompt);
+            if (!response.success) {
+                loadingState.innerHTML = `<p class="text-red-500 text-center font-semibold">${response.message}</p>`;
+                return;
+            }
+            const data = parseJsonFromText(response.data);
+            if (data) {
+                renderDashboard(data);
+            } else {
+                loadingState.innerHTML = `<p class="text-red-500 text-center font-semibold">The AI returned an unexpected response. Please try again.</p>`;
+            }
+        }
+
+        async function renderDashboard(data) {
+            loadingState.classList.add('hidden');
+            dashboardContent.classList.remove('hidden');
+            
+            document.getElementById('market-summary').innerText = data.summary;
+            const commonOptions = { scales: { x: { grid: { color: 'rgba(255,255,255,0.1)' }, ticks: { color: '#9ca3af'} }, y: { grid: { color: 'rgba(255,255,255,0.1)' }, ticks: { color: '#d1d5db'} } }, plugins: { legend: { labels: { color: '#d1d5db' } } }, maintainAspectRatio: false, responsive: true };
+            
+            // Overview Tab
+            chartInstances.topSkills = new Chart('topSkillsChart', { type: 'bar', data: { labels: data.top_skills.map(s => s.skill), datasets: [{ label: 'Demand Score', data: data.top_skills.map(s => s.demand_score), backgroundColor: 'rgba(139, 92, 246, 0.6)' }] }, options: { ...commonOptions, indexAxis: 'y', plugins: { legend: { display: false } } } });
+            chartInstances.rolePie = new Chart('rolePieChart', { type: 'pie', data: { labels: data.role_specializations.map(r => r.specialization), datasets: [{ data: data.role_specializations.map(r => r.percentage), backgroundColor: ['#8B5CF6', '#6366F1', '#EC4899', '#F472B6', '#FBBF24'] }] }, options: { ...commonOptions, scales: {} } });
+
+            // Skills Tab
+            const trendData = { labels: data.skill_trend_data[Object.keys(data.skill_trend_data)[0]].map(d => new Date(d.month)), datasets: Object.keys(data.skill_trend_data).map((skill, i) => ({ label: skill, data: data.skill_trend_data[skill].map(d => d.demand), tension: 0.4, borderColor: ['#8B5CF6', '#EC4899', '#34D399'][i] }))};
+            chartInstances.skillTrend = new Chart('skillTrendChart', { type: 'line', data: trendData, options: { ...commonOptions, scales: { ...commonOptions.scales, x: { type: 'time', time: { unit: 'month' }, grid: { color: 'rgba(255,255,255,0.1)' }, ticks: { color: '#9ca3af' } } } } });
+            chartInstances.skillRadar = new Chart('skillRadarChart', { type: 'radar', data: { labels: Object.keys(data.skill_categories), datasets: [{ label: 'Category Proficiency', data: Object.values(data.skill_categories), backgroundColor: 'rgba(139, 92, 246, 0.4)', borderColor: '#8B5CF6' }] }, options: { ...commonOptions, scales: { r: { angleLines: { color: 'rgba(255,255,255,0.1)'}, grid: { color: 'rgba(255,255,255,0.1)'}, pointLabels: { color: '#d1d5db'}, ticks: { color: '#000', backdropColor: 'rgba(255,255,255,0.8)', stepSize: 20 } } } } });
+
+            // Salary Tab
+            chartInstances.salaryHistogram = new Chart('salaryHistogram', { type: 'bar', data: { labels: [...Array(10)].map((_, i) => `${(i*20)+40}k-${(i*20)+60}k`), datasets: [{ label: 'Number of Jobs', data: [...Array(10)].map((_, i) => data.salary_distribution.filter(s => s >= ((i*20)+40)*1000 && s < ((i*20)+60)*1000).length), backgroundColor: 'rgba(139, 92, 246, 0.6)' }] }, options: { ...commonOptions, plugins: { legend: { display: false } } } });
+            chartInstances.experienceScatter = new Chart('experienceScatterPlot', { type: 'scatter', data: { datasets: [{ label: 'Experience vs Salary', data: data.experience_salary.map(d => ({x: d.years_experience, y: d.salary})), backgroundColor: 'rgba(236, 72, 153, 0.6)'}] }, options: { ...commonOptions, scales: { ...commonOptions.scales, y: { ticks: { callback: (value) => '$' + (value/1000) + 'k' } } } } });
+        }
+    </script>
+</body>
+</html>
